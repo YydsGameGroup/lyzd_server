@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.GameGroupMapper">
+    
+    <resultMap type="GameGroup" id="GameGroupResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="synopsis"    column="synopsis"    />
+        <result property="contact"    column="contact"    />
+        <result property="maxNum"    column="max_num"    />
+        <result property="gameCode"    column="game_code"    />
+        <result property="gameName"    column="game_name"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="headImg"    column="head_img"    />
+        <result property="createByName"    column="create_by_name"    />
+        <result property="phone"    column="phone"    />
+        <result property="status"    column="status"    />
+
+    </resultMap>
+
+    <sql id="selectGameGroupVo">
+        select gg.id, gg.name, gg.synopsis, gg.contact, gg.max_num, gg.game_code, gg.game_name,
+        gg.create_by,gg.start_time,gg.end_time,gg.status,
+        gg.create_time, gg.update_by, gg.update_time, gg.remark,gu.head_img,gu.name as create_by_name, gu.phone as phone
+        from game_group gg
+        left join join_group jg on gg.id = jg.group_id and jg.rule=1
+        left join game_user gu on gu.id = jg.user_id
+    </sql>
+
+    <select id="selectGameGroupList" parameterType="GameGroup" resultMap="GameGroupResult">
+        <include refid="selectGameGroupVo"/>
+        <where>
+            gg.status = '1'
+            <if test="name != null  and name != ''"> and gg.name like concat('%', #{name}, '%')</if>
+            <if test="synopsis != null  and synopsis != ''"> and gg.synopsis = #{synopsis}</if>
+            <if test="contact != null  and contact != ''"> and gg.contact = #{contact}</if>
+            <if test="maxNum != null  and maxNum != ''"> and gg.max_num = #{maxNum}</if>
+            <if test="gameCode != null  and gameCode != ''"> and gg.game_code = #{gameCode}</if>
+            <if test="gameName != null  and gameName != ''"> and gg.game_name like concat('%', #{gameName}, '%')</if>
+            <if test="startTime != null">
+                AND date_format(gg.start_time,'%y-%m-%d %H:%i:%S') &lt;= date_format(#{startTime},'%y-%m-%d %H:%i:%S')
+            </if>
+            <if test="endTime != null">
+                AND date_format(gg.end_time,'%y-%m-%d %H:%i:%S') &gt;= date_format(#{endTime},'%y-%m-%d %H:%i:%S')
+            </if>
+            <if test="createBy != null  and createBy != ''"> and gg.create_by = #{createBy}</if>
+
+            <if test="ids != null and ids.size() > 0">
+                and gg.id in
+                <foreach collection="ids" open="(" item="id" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        order by gg.create_time desc
+    </select>
+    <select id="selectMaxNewGameGroup" parameterType="GameGroup" resultMap="GameGroupResult">
+        select * from game_group gg
+        <where>
+            gg.status = '1'
+            <if test="name != null  and name != ''"> and gg.name like concat('%', #{name}, '%')</if>
+            <if test="synopsis != null  and synopsis != ''"> and gg.synopsis = #{synopsis}</if>
+            <if test="contact != null  and contact != ''"> and gg.contact = #{contact}</if>
+            <if test="maxNum != null  and maxNum != ''"> and gg.max_num = #{maxNum}</if>
+            <if test="gameCode != null  and gameCode != ''"> and gg.game_code = #{gameCode}</if>
+            <if test="gameName != null  and gameName != ''"> and gg.game_name like concat('%', #{gameName}, '%')</if>
+        </where>
+        order by gg.create_time desc limit 1
+    </select>
+
+
+    <select id="selectGameGroupById" parameterType="Long" resultMap="GameGroupResult">
+        <include refid="selectGameGroupVo"/>
+        where gg.id = #{id}
+    </select>
+
+    <insert id="insertGameGroup" parameterType="GameGroup">
+        insert into game_group
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null">name,</if>
+            <if test="synopsis != null">synopsis,</if>
+            <if test="contact != null">contact,</if>
+            <if test="maxNum != null">max_num,</if>
+            <if test="gameCode != null">game_code,</if>
+            <if test="gameName != null">game_name,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="status != null">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null">#{name},</if>
+            <if test="synopsis != null">#{synopsis},</if>
+            <if test="contact != null">#{contact},</if>
+            <if test="maxNum != null">#{maxNum},</if>
+            <if test="gameCode != null">#{gameCode},</if>
+            <if test="gameName != null">#{gameName},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="status != null">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGameGroup" parameterType="GameGroup">
+        update game_group
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="synopsis != null">synopsis = #{synopsis},</if>
+            <if test="contact != null">contact = #{contact},</if>
+            <if test="maxNum != null">max_num = #{maxNum},</if>
+            <if test="gameCode != null">game_code = #{gameCode},</if>
+            <if test="gameName != null">game_name = #{gameName},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="status != null">status = #{status},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGameGroupById" parameterType="Long">
+        delete from game_group where id = #{id}
+    </delete>
+
+    <delete id="deleteGameGroupByIds" parameterType="String">
+        delete from game_group where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

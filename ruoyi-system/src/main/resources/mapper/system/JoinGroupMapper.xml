@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.JoinGroupMapper">
+    
+    <resultMap type="JoinGroup" id="JoinGroupResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="groupId"    column="group_id"    />
+        <result property="joinTime"    column="join_time"    />
+        <result property="rule"    column="rule"    />
+        <result property="gameCode"    column="game_code"    />
+    </resultMap>
+
+    <sql id="selectJoinGroupVo">
+        select id, user_id, group_id, join_time, rule, game_code from join_group
+    </sql>
+
+    <select id="selectJoinGroupList" parameterType="JoinGroup" resultMap="JoinGroupResult">
+        <include refid="selectJoinGroupVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="groupId != null "> and group_id = #{groupId}</if>
+            <if test="joinTime != null "> and join_time = #{joinTime}</if>
+            <if test="rule != null  and rule != ''"> and rule = #{rule}</if>
+            <if test="gameCode != null  and gameCode != ''"> and game_code = #{gameCode}</if>
+        </where>
+        order by join_time asc
+    </select>
+    
+    <select id="selectJoinGroupById" parameterType="Long" resultMap="JoinGroupResult">
+        <include refid="selectJoinGroupVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertJoinGroup" parameterType="JoinGroup">
+        insert into join_group
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="groupId != null">group_id,</if>
+            <if test="joinTime != null">join_time,</if>
+            <if test="rule != null">rule,</if>
+            <if test="gameCode != null">game_code,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="groupId != null">#{groupId},</if>
+            <if test="joinTime != null">#{joinTime},</if>
+            <if test="rule != null">#{rule},</if>
+            <if test="gameCode != null">#{gameCode},</if>
+         </trim>
+    </insert>
+
+    <update id="updateJoinGroup" parameterType="JoinGroup">
+        update join_group
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="groupId != null">group_id = #{groupId},</if>
+            <if test="joinTime != null">join_time = #{joinTime},</if>
+            <if test="rule != null">rule = #{rule},</if>
+            <if test="gameCode != null">game_code = #{gameCode},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteJoinGroupById" parameterType="Long">
+        delete from join_group where id = #{id}
+    </delete>
+
+    <delete id="deleteJoinGroupByIds" parameterType="String">
+        delete from join_group where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

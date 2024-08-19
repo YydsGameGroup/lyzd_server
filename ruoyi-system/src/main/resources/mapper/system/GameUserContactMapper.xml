@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.GameUserContactMapper">
+
+    <resultMap type="GameUserContact" id="GameUserContactResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="type"    column="type"    />
+        <result property="value"    column="value"    />
+        <result property="typeName"    column="type_name"    />
+    </resultMap>
+
+    <sql id="selectGameUserContactVo">
+        select id, user_id, type,type_name, value, create_by, create_time, update_by, update_time, remark from game_user_contact
+    </sql>
+
+
+
+    <select id="selectGameUserContactList" parameterType="GameUserContact" resultMap="GameUserContactResult">
+        <include refid="selectGameUserContactVo"/>
+        <where>  
+            <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+        </where>
+    </select>
+    
+    <select id="selectGameUserContactById" parameterType="Long" resultMap="GameUserContactResult">
+        <include refid="selectGameUserContactVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertGameUserContact" parameterType="GameUserContact">
+        insert into game_user_contact
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="type != null">type,</if>
+            <if test="typeName != null">type_name,</if>
+            <if test="value != null">value,</if>
+
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="type != null">#{type},</if>
+            <if test="typeName != null">#{typeName},</if>
+            <if test="value != null">#{value},</if>
+
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGameUserContact" parameterType="GameUserContact">
+        update game_user_contact
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="typeName != null">type_name = #{typeName},</if>
+            <if test="value != null">value = #{value},</if>
+
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGameUserContactById" parameterType="Long">
+        delete from game_user_contact where id = #{id}
+    </delete>
+
+    <delete id="deleteGameUserContactByIds" parameterType="String">
+        delete from game_user_contact where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>
